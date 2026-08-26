@@ -1,0 +1,110 @@
+generated: '2026-08-25'
+method: probed
+source: 'Derived from documents fetched live on 2026-08-25: https://www.maisonette.com/.well-known/ucp,
+  /.well-known/openid-configuration, /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource,
+  /llms.txt, and JSON-RPC responses from https://www.maisonette.com/api/ucp/mcp.'
+note: Maisonette publishes no OpenAPI. Every assertion below is read from a machine-readable
+  document the store itself serves, not from a marketing claim.
+standards:
+- id: ucp
+  name: Universal Commerce Protocol
+  conforms: true
+  version: '2026-04-08'
+  also_supported:
+  - '2026-01-23'
+  evidence: '/.well-known/ucp declares ucp.version 2026-04-08 and enumerates the capability
+    URNs dev.ucp.shopping.checkout, dev.ucp.shopping.cart, dev.ucp.shopping.fulfillment,
+    dev.ucp.shopping.discount, dev.ucp.shopping.order, dev.ucp.shopping.catalog.search,
+    dev.ucp.shopping.catalog.lookup and the Shopify extension dev.shopify.catalog,
+    each bound to a versioned JSON Schema on ucp.dev. The MCP endpoint echoes x-shopify-ucp-mcp-api-version:
+    2026-04-08 on every response.'
+  domain_standard: true
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  version_negotiated: '2024-11-05'
+  evidence: POST https://www.maisonette.com/api/ucp/mcp initialize returns protocolVersion
+    2024-11-05, serverInfo {name universal-commerce, version 0.1.0}, and capabilities
+    for tools/prompts/resources/logging. tools/list returns 13 tools with JSON Schema
+    2020-12 inputSchemas.
+- id: json-schema-2020-12
+  name: JSON Schema draft 2020-12
+  conforms: true
+  evidence: Every MCP tool inputSchema declares $schema https://json-schema.org/draft/2020-12/schema.
+- id: oidc
+  name: OpenID Connect Discovery 1.0
+  conforms: true
+  evidence: /.well-known/openid-configuration returns issuer, authorization_endpoint,
+    token_endpoint, jwks_uri, end_session_endpoint, id_token_signing_alg_values_supported
+    [RS256], claims_supported and response_types_supported [code]. The issuer is Shopify's
+    customer-account authorization server for this store (shop id 58323238975).
+- id: oauth2
+  name: OAuth 2.0 Authorization Server Metadata (RFC 8414)
+  conforms: true
+  evidence: /.well-known/oauth-authorization-server returns the same metadata document,
+    with grant_types_supported [authorization_code, refresh_token, urn:ietf:params:oauth:grant-type:jwt-bearer]
+    and code_challenge_methods_supported [S256].
+- id: rfc9728
+  name: OAuth 2.0 Protected Resource Metadata (RFC 9728)
+  conforms: true
+  evidence: /.well-known/oauth-protected-resource returns resource https://www.maisonette.com,
+    authorization_servers [https://shopify.com/authentication/58323238975], bearer_methods_supported
+    [header].
+- id: pkce
+  name: PKCE (RFC 7636)
+  conforms: true
+  evidence: code_challenge_methods_supported [S256] in the authorization-server metadata.
+- id: jsonrpc-2
+  name: JSON-RPC 2.0
+  conforms: true
+  evidence: The MCP transport speaks JSON-RPC 2.0; observed error envelope {"jsonrpc":"2.0","id":2,"error":{"code":-32001,...}}.
+- id: iso4217
+  name: ISO 4217 currency codes / minor units
+  conforms: true
+  evidence: Every MCP tool description states prices are integers in the currency's
+    ISO 4217 minor units paired with a currency code.
+- id: iso3166-1-alpha-2
+  name: ISO 3166-1 alpha-2 country codes
+  conforms: true
+  evidence: catalog context.address_country is documented as an ISO 3166-1 alpha-2
+    code in the search_catalog inputSchema.
+- id: bcp47
+  name: BCP 47 language tags
+  conforms: true
+  evidence: catalog context.language documented as an IETF BCP 47 language tag.
+- id: schema-org
+  name: schema.org structured data
+  conforms: true
+  evidence: The storefront homepage embeds application/ld+json with @type Organization
+    for Maisonette. Product and collection pages are Shopify-generated.
+- id: llmstxt
+  name: llms.txt agent-instruction convention
+  conforms: true
+  evidence: https://www.maisonette.com/llms.txt returns 200 text/markdown and mirrors
+    /agents.md; /sitemap_agentic_discovery.xml lists /agents.md.
+- id: rfc9457
+  name: RFC 9457 Problem Details
+  conforms: false
+  evidence: No HTTP problem+json surface exists; errors are JSON-RPC 2.0 error objects
+    over the MCP transport.
+- id: openapi
+  name: OpenAPI
+  conforms: false
+  evidence: /openapi.json, /openapi.yaml, /swagger.json and /api-docs all 404 on www.maisonette.com;
+    api.maisonette.com returns nginx 503 on every path. No OpenAPI is published.
+- id: asyncapi
+  name: AsyncAPI
+  conforms: false
+  evidence: No event, streaming or webhook surface is published by Maisonette. Shopify
+    webhooks are configured per-app by merchants and are not a Maisonette-published
+    contract.
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: /.well-known/agent-card.json and /.well-known/agent.json both return 404
+    HTML on www.maisonette.com.
+compliance:
+  published_certifications: []
+  note: No trust center, certification page or security.txt was found on maisonette.com;
+    probe-security-programs.py returned vdp=none trust=none. Payment card handling is
+    delegated to Shopify and Google Pay per the /.well-known/ucp payment_handlers block.

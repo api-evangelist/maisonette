@@ -1,0 +1,52 @@
+generated: '2026-08-25'
+method: probed
+source: Live JSON-RPC responses observed from https://www.maisonette.com/api/ucp/mcp
+  on 2026-08-25, plus the error guidance published at https://www.maisonette.com/llms.txt.
+format: jsonrpc-2.0
+note: 'Maisonette publishes no HTTP REST API, so there is no RFC 9457 problem+json surface
+  to derive from. Errors on the agent surface are JSON-RPC 2.0 error objects. Only errors
+  actually elicited or explicitly documented are listed — nothing here is inferred from
+  a generic JSON-RPC code table.'
+envelope:
+  shape: '{"jsonrpc":"2.0","id":<id>,"error":{"code":<int>,"message":<string>,"data":{"code":<slug>,"content":<string>,"continue_url":<url>}}}'
+  fields:
+  - name: error.code
+    description: Integer JSON-RPC error code.
+  - name: error.message
+    description: Human-readable summary.
+  - name: error.data.code
+    description: Machine-readable slug identifying the specific failure.
+  - name: error.data.content
+    description: Detail string explaining what was missing or wrong.
+  - name: error.data.continue_url
+    description: A URL an agent can hand to the human buyer to complete or recover the
+      flow in a browser. This is the store's escape hatch when an agent cannot proceed.
+problem_types:
+- code: -32001
+  data_code: invalid_profile_url
+  title: UCP discovery failed
+  observed: true
+  observed_on: '2026-08-25'
+  observed_request: '{"jsonrpc":"2.0","id":2,"method":"resources/list"}'
+  observed_response: '{"jsonrpc":"2.0","id":2,"error":{"code":-32001,"message":"UCP discovery
+    failed","data":{"code":"invalid_profile_url","content":"Unable to fetch agent profile:
+    Missing profile uri","continue_url":"https://ad4903-c2.myshopify.com/"}}}'
+  meaning: The caller did not supply meta.ucp-agent.profile, or supplied a URI the server
+    could not fetch.
+  remediation: Publish an agent profile at a fetchable URI and pass it as params.meta.ucp-agent.profile
+    on every call.
+http_status_notes:
+- status: 200
+  note: The MCP endpoint answers 200 even for JSON-RPC errors; the failure is carried
+    in the body, not the status line. Agents must inspect the body.
+- status: 429
+  note: 'Documented but not elicited. llms.txt states: "Respect rate limits. The MCP
+    endpoint is rate-limited per IP. Back off on 429 responses." No Retry-After header
+    was observed on any successful response.'
+- status: 404
+  note: 'Storefront 404s return an HTML 404 page (title "404 Not Found"), not JSON —
+    this is what /.well-known/security.txt, /.well-known/api-catalog and /.well-known/agent-card.json
+    return.'
+- status: 503
+  note: api.maisonette.com returns an nginx "503 Service Temporarily Unavailable" HTML
+    page on every path probed. Treat that host as dead.

@@ -1,0 +1,9 @@
+{
+  "resource": "https://www.maisonette.com",
+  "authorization_servers": [
+    "https://shopify.com/authentication/58323238975"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ]
+}

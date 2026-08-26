@@ -1,0 +1,67 @@
+generated: '2026-08-25'
+method: probed
+source: Direct unauthenticated HTTP probes of https://www.maisonette.com/.well-known/*
+  and https://api.maisonette.com/.well-known/* on 2026-08-25.
+note: 'www.maisonette.com serves four live .well-known documents. The store runs on
+  Shopify, so the OAuth/OIDC documents delegate to Shopify''s customer-account authorization
+  server (https://shopify.com/authentication/58323238975) while being served from Maisonette''s
+  own host and naming Maisonette''s own store as the protected resource. The UCP document
+  is the Universal Commerce Protocol merchant profile for this store and names Maisonette
+  as merchant in its Google Pay payment-handler config. api.maisonette.com resolves
+  but every path returns nginx 503 Service Temporarily Unavailable — a dead legacy
+  API host, most likely the retired Spree Store API surface.'
+hosts:
+- host: www.maisonette.com
+  documents:
+  - path: /.well-known/ucp
+    status: 200
+    file: well-known/maisonette-ucp.json
+    note: Universal Commerce Protocol merchant profile, version 2026-04-08.
+  - path: /.well-known/openid-configuration
+    status: 200
+    file: well-known/maisonette-openid-configuration.json
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    file: well-known/maisonette-oauth-authorization-server.json
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    file: well-known/maisonette-oauth-protected-resource.json
+    note: RFC 9728 protected-resource metadata; resource is https://www.maisonette.com.
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+- host: api.maisonette.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 503
+  - path: /.well-known/openid-configuration
+    status: 503
+  - path: /.well-known/oauth-authorization-server
+    status: 503
+  - path: /.well-known/api-catalog
+    status: 503
+  - path: /.well-known/ai-plugin.json
+    status: 503
+  - path: /.well-known/agent-card.json
+    status: 503
+  - path: /.well-known/agent.json
+    status: 503
+other_agent_surfaces:
+- path: /llms.txt
+  status: 200
+  content_type: text/markdown
+  file: llms/maisonette-llms.txt
+- path: /agents.md
+  status: 200
+  content_type: text/markdown
+  file: llms/maisonette-agents.md
+- path: /sitemap_agentic_discovery.xml
+  status: 200
+  note: A dedicated agent-discovery sitemap listing exactly one URL, /agents.md.

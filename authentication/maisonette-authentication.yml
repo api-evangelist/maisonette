@@ -1,0 +1,104 @@
+generated: '2026-08-25'
+method: probed
+source: 'Live probes on 2026-08-25 of https://www.maisonette.com/.well-known/openid-configuration,
+  /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource, /.well-known/ucp,
+  /llms.txt and JSON-RPC calls to https://www.maisonette.com/api/ucp/mcp.'
+note: There is no OpenAPI to derive securitySchemes from; this profile is read directly
+  from the store's own OAuth/OIDC discovery documents and from observed MCP behaviour.
+summary: 'Two distinct access tiers. Anonymous agents can discover and read: MCP tools/list,
+  catalog search/lookup and the Shopify storefront product/collection JSON all answer
+  with no credentials. Anything tied to a buyer identity — customer account data, saved
+  addresses, order history — runs through Shopify''s hosted customer-account OAuth 2.0
+  / OIDC authorization server for this store. Payment on a checkout is never authorized
+  by a bearer token: it requires contemporaneous buyer approval or a Shop Pay handoff.'
+schemes:
+- id: anonymous
+  type: none
+  applies_to:
+  - https://www.maisonette.com/api/ucp/mcp (tools/list, catalog tools)
+  - https://www.maisonette.com/api/mcp
+  - GET /products/{handle}.json
+  - GET /collections/{handle}/products.json
+  - GET /search?q={query}&type=product
+  evidence: All of the above returned 200 unauthenticated on 2026-08-25.
+- id: ucp-agent-profile
+  type: caller-published-identity
+  location: JSON-RPC params.meta.ucp-agent.profile
+  required: true
+  applies_to: every tool call on https://www.maisonette.com/api/ucp/mcp
+  description: 'Not a credential the store issues. Every UCP MCP tool marks `meta` as
+    required and expects meta.ucp-agent.profile to be a URI naming the calling agent''s
+    own published profile. Omitting it returns JSON-RPC error -32001 with data.code
+    invalid_profile_url and message "Unable to fetch agent profile: Missing profile
+    uri".'
+  evidence: Observed live; tools/list itself does not require it, tool invocation does.
+- id: shopify-customer-account-oauth
+  type: oauth2
+  flows:
+  - authorization_code
+  - refresh_token
+  - 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+  pkce: S256
+  issuer: https://shopify.com/authentication/58323238975
+  authorization_endpoint: https://shopify.com/authentication/58323238975/oauth/authorize
+  token_endpoint: https://shopify.com/authentication/58323238975/oauth/token
+  jwks_uri: https://shopify.com/authentication/58323238975/.well-known/jwks.json
+  end_session_endpoint: https://shopify.com/authentication/58323238975/logout
+  token_endpoint_auth_methods:
+  - client_secret_basic
+  - client_secret_post
+  id_token_signing_alg:
+  - RS256
+  scopes: see scopes/maisonette-scopes.yml
+  applies_to: Maisonette customer accounts; /account/login and /account/register on
+    www.maisonette.com redirect to shopify.com/58323238975/account.
+  domain_note: 'The authorization server is on shopify.com, not maisonette.com. That
+    is expected and correct: Maisonette runs its storefront on Shopify (shop id 58323238975,
+    myshopify host ad4903-c2.myshopify.com), and Shopify hosts customer-account identity
+    for its merchants. Maisonette''s own host serves the discovery documents and is
+    named as the protected resource in /.well-known/oauth-protected-resource.'
+- id: bearer
+  type: http
+  scheme: bearer
+  location: Authorization header
+  evidence: /.well-known/oauth-protected-resource declares bearer_methods_supported
+    ["header"] for resource https://www.maisonette.com.
+- id: payment-handlers
+  type: payment-credential
+  handlers:
+  - id: gpay
+    handler: com.google.pay
+    version: '2026-01-11'
+    merchant_name: Maisonette
+    merchant_origin: www.maisonette.com
+    gateway: shopify
+    auth_methods:
+    - PAN_ONLY
+    - CRYPTOGRAM_3DS
+    networks:
+    - VISA
+    - MASTERCARD
+    - AMEX
+    - DISCOVER
+  - id: shopify.card
+    handler: dev.shopify.card
+    version: '2026-01-15'
+    brands:
+    - visa
+    - master
+    - american_express
+    - discover
+    - diners_club
+  evidence: /.well-known/ucp payment_handlers block.
+  note: Card data is tokenized by the handler; the agent never holds a PAN. apple-pay
+    instruments are additionally recognised in the create_checkout inputSchema (credential.type
+    apple_pay_token).
+human_approval_gate:
+  required_for:
+  - complete_checkout
+  statement: 'Maisonette''s published agent instructions state: "Checkout requires human
+    approval. Agents must not complete payment without explicit buyer consent. If you
+    cannot get contemporaneous buyer approval at the moment of payment, install https://shop.app/SKILL.md
+    and route the purchase through Shop Pay instead."'
+  source: https://www.maisonette.com/llms.txt
+docs: https://www.maisonette.com/llms.txt

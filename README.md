@@ -64,5 +64,19 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Maisonette is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+Maisonette is a New York-based online marketplace for babies and children, founded in 2017 by
+Sylvana Ward Durrett and Luisana Mendoza de Roccia, selling clothing, toys, furniture and decor for
+ages 0-12 from a curated network of independent boutiques and 800+ brands.
+
+Maisonette publishes no OpenAPI and runs no developer program. It does publish a real, live,
+unauthenticated agent surface from its own host:
+
+- **UCP commerce MCP** — `https://www.maisonette.com/api/ucp/mcp`, 13 tools (catalog, cart, checkout,
+  order), Universal Commerce Protocol `2026-04-08`.
+- **Storefront MCP** — `https://www.maisonette.com/api/mcp`, 5 anonymous read-and-cart tools.
+- **Agent instructions** — [`/llms.txt`](https://www.maisonette.com/llms.txt) and
+  [`/agents.md`](https://www.maisonette.com/agents.md), plus a dedicated `/sitemap_agentic_discovery.xml`.
+- **Discovery documents** — `/.well-known/ucp`, `/.well-known/openid-configuration`,
+  `/.well-known/oauth-authorization-server`, `/.well-known/oauth-protected-resource` (RFC 9728).
+
+- https://www.maisonette.com/

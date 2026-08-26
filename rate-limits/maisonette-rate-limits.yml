@@ -1,0 +1,49 @@
+generated: '2026-08-25'
+method: probed
+source: 'Published guidance at https://www.maisonette.com/llms.txt plus response headers
+  observed live on https://www.maisonette.com/api/ucp/mcp, 2026-08-25.'
+limit_count: 0
+note: 'Maisonette states that rate limiting exists but publishes no number. Its llms.txt
+  says: "Respect rate limits. The MCP endpoint is rate-limited per IP. Back off on 429
+  responses." No quota, window, or burst figure is given anywhere, and no standard rate-limit
+  headers are returned. The only runtime cost signal is a Shopify complexity score,
+  which tells an agent what a call cost but not what budget remains. An honest zero:
+  the policy is stated, the limits are not.'
+limits: []
+scope_documented: per IP
+status_on_exhaustion: 429
+retry_guidance: 'Back off on 429 responses (stated in llms.txt). No Retry-After header
+  was observed on any successful response; whether one is returned on an actual 429 was
+  not tested — deliberately, since eliciting a 429 would mean abusing the endpoint.'
+response_headers:
+  standard_present: []
+  standard_absent:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - X-RateLimit-Reset
+  - RateLimit-Limit
+  - RateLimit-Remaining
+  - RateLimit-Reset
+  - Retry-After
+  vendor_present:
+  - name: shopify-complexity-score
+    observed_values:
+    - '1380'
+    - '620'
+    description: Cost of the call in Shopify complexity units. Varies with the request
+      — tools/list on the UCP endpoint scored 1380, a repeat scored 620.
+  - name: shopify-complexity-score-v2
+    observed_values:
+    - '138'
+    - '62'
+    description: The v2 scale of the same signal, one tenth of the v1 value in both
+      observations.
+  - name: x-shopify-ucp-mcp-api-version
+    observed_values:
+    - '2026-04-08'
+    description: Not a rate-limit header; recorded because it is the protocol-version
+      signal returned alongside.
+surfaces_covered:
+- https://www.maisonette.com/api/ucp/mcp
+- https://www.maisonette.com/api/mcp
+docs: https://www.maisonette.com/llms.txt

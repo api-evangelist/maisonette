@@ -1,0 +1,52 @@
+generated: '2026-08-25'
+method: probed
+source: https://www.maisonette.com/.well-known/ucp, MCP response headers from https://www.maisonette.com/api/ucp/mcp,
+  https://www.maisonette.com/llms.txt, and host probes, all 2026-08-25.
+versioning:
+  scheme: date-versioned protocol (UCP)
+  current_version: '2026-04-08'
+  supported_versions:
+  - version: '2026-04-08'
+    status: latest stable
+    discovery: https://ad4903-c2.myshopify.com/.well-known/ucp/2026-04-08
+  - version: '2026-01-23'
+    status: supported
+    discovery: https://ad4903-c2.myshopify.com/.well-known/ucp/2026-01-23
+  runtime_header: 'x-shopify-ucp-mcp-api-version: 2026-04-08'
+  note: Version negotiation is inherited from the Universal Commerce Protocol and the
+    Shopify platform, not authored by Maisonette. The store publishes which versions
+    it serves, which is the part that matters to an agent.
+  mcp_protocol_version: '2024-11-05'
+  mcp_protocol_note: The MCP initialize handshake negotiates down to 2024-11-05 even
+    though the UCP layer advertises 2026-04-08.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  note: No deprecation policy, Sunset header (RFC 8594) or Deprecation header is published.
+    The only observable deprecation signal is the retained 2026-01-23 UCP version alongside
+    the current one.
+sla:
+  published: false
+status_page:
+  published: false
+  probes:
+  - url: https://status.maisonette.com
+    result: NXDOMAIN
+  - url: https://maisonette.statuspage.io
+    status: 200
+    result: Redirects to https://www.atlassian.com/software/statuspage — the Statuspage
+      product marketing site, not a Maisonette status page. Not a status page; do not
+      credit one.
+changelog:
+  published: false
+retired_surfaces:
+- host: api.maisonette.com
+  status: 503
+  observed: '2026-08-25'
+  note: 'Resolves to Cloudflare but returns nginx 503 Service Temporarily Unavailable
+    on every path probed (/, /openapi.json, /graphql, /.well-known/*). Maisonette''s
+    marketplace previously ran on Spree Commerce with a Next.js frontend calling the
+    Spree Store API; the storefront now runs on Shopify (shop id 58323238975). This
+    host is consistent with that retired stack, but Maisonette publishes no statement
+    about it, so the retirement is recorded as observed, not as declared.'

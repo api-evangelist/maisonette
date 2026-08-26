@@ -1,23 +1,127 @@
 aid: maisonette
 name: Maisonette
-description: 'Maisonette is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Maisonette is a New York-based online marketplace for babies and children,
+  founded in 2017 by Sylvana Ward Durrett and Luisana Mendoza de Roccia, selling clothing,
+  toys, furniture and decor for ages 0-12 from a curated network of independent boutiques
+  and 800+ brands. It is a marketplace rather than a single seller: each item ships
+  directly from its brand and is returned separately. Maisonette publishes no OpenAPI
+  and runs no developer program, but its Shopify-hosted storefront exposes a real,
+  live, unauthenticated agent surface — a Universal Commerce Protocol MCP endpoint with
+  thirteen catalog, cart, checkout and order tools, a five-tool storefront MCP endpoint,
+  an llms.txt and agents.md with explicit agent instructions, an agent-discovery sitemap,
+  and OAuth 2.0/OIDC and RFC 9728 discovery documents served from its own host.'
 url: https://raw.githubusercontent.com/api-evangelist/maisonette/refs/heads/main/apis.yml
+image: https://www.maisonette.com/cdn/shop/files/Favicon_Maisonette_ac4c0de7-1fd8-4114-b034-f15a8d57ac59.png?v=1776358749&width=512
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-25'
 modified: '2026-08-25'
 tags:
 - Company
-apis: []
+- Retail
+- E-Commerce
+- Marketplace
+- Shopping
+- Children
+- Baby
+- Apparel
+- Home
+- Agentic Commerce
+- MCP
+- Universal Commerce Protocol
+- Shopify
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+apis:
+- name: Maisonette UCP Commerce MCP
+  description: 'Maisonette''s agent-facing commerce surface: a Universal Commerce Protocol
+    (2026-04-08) MCP server exposing thirteen tools across catalog search and lookup,
+    cart, checkout and order. tools/list answers 200 with no credentials; tool calls
+    require the caller to supply its own published agent-profile URI, and completing
+    a checkout requires both an idempotency key and contemporaneous buyer approval.
+    Announced by the store''s own llms.txt and /.well-known/ucp.'
+  humanURL: https://www.maisonette.com/agents.md
+  baseURL: https://www.maisonette.com/api/ucp/mcp
+  tags:
+  - MCP
+  - Agentic Commerce
+  - Universal Commerce Protocol
+  - Checkout
+  - Catalog
+  properties:
+  - type: MCPServer
+    url: mcp/maisonette-mcp.yml
+  - type: Documentation
+    url: https://www.maisonette.com/agents.md
+  - type: LLMsTxt
+    url: https://www.maisonette.com/llms.txt
+- name: Maisonette Storefront MCP
+  description: The lighter read-and-cart Shopify Storefront MCP surface on Maisonette's
+    own host — five anonymous tools covering catalog search, product detail, cart read
+    and update, and a grounded search over the store's policies and FAQs. Not named in
+    llms.txt; discovered by probing the conventional Shopify path.
+  humanURL: https://www.maisonette.com/agents.md
+  baseURL: https://www.maisonette.com/api/mcp
+  tags:
+  - MCP
+  - Catalog
+  - Support
+  properties:
+  - type: MCPServer
+    url: mcp/maisonette-mcp.yml
 common:
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://www.maisonette.com/
+- type: Documentation
+  url: https://www.maisonette.com/agents.md
+- type: LLMsTxt
+  url: llms/maisonette-llms.txt
+- type: MCPServer
+  url: mcp/maisonette-mcp.yml
+- type: WellKnown
+  url: well-known/maisonette-well-known.yml
+- type: Authentication
+  url: authentication/maisonette-authentication.yml
+- type: OAuthScopes
+  url: scopes/maisonette-scopes.yml
+- type: Conformance
+  url: conformance/maisonette-conformance.yml
+- type: ErrorCatalog
+  url: errors/maisonette-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/maisonette-lifecycle.yml
+- type: Conventions
+  url: conventions/maisonette-conventions.yml
+- type: Idempotency
+  url: conventions/maisonette-conventions.yml
+- type: DataModel
+  url: data-model/maisonette-data-model.yml
+- type: RateLimits
+  url: rate-limits/maisonette-rate-limits.yml
+- type: Plans
+  url: plans/maisonette-plans-pricing.yml
+- type: Packages
+  url: packages/maisonette-packages.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DomainSecurity
+  url: security/maisonette-domain-security.yml
+- type: Support
+  url: https://www.maisonette.com/pages/contact
+- type: HelpCenter
+  url: https://www.maisonette.com/pages/faq
+- type: TermsOfService
+  url: https://www.maisonette.com/policies/terms-of-service
+- type: PrivacyPolicy
+  url: https://www.maisonette.com/policies/privacy-policy
+- type: SignUp
+  url: https://www.maisonette.com/account/register
+x-enrichment:
+  date: '2026-08-25'
+  status: enriched
+  artifacts_added: 24
+  pass: local-v1

@@ -1,0 +1,46 @@
+generated: '2026-08-25'
+method: probed
+source: https://www.maisonette.com/.well-known/openid-configuration (and the identical
+  /.well-known/oauth-authorization-server), fetched 2026-08-25, HTTP 200.
+note: 'derive-oauth-scopes.py was not usable here — it reads OpenAPI oauth2 securitySchemes
+  and Maisonette publishes no OpenAPI. These scopes are read verbatim from the store''s
+  own machine-readable authorization-server metadata. The authorization server is Shopify''s
+  hosted customer-account issuer for Maisonette''s shop (id 58323238975), which is
+  why the scope names carry Shopify''s customer-account naming.'
+issuer: https://shopify.com/authentication/58323238975
+authorization_endpoint: https://shopify.com/authentication/58323238975/oauth/authorize
+token_endpoint: https://shopify.com/authentication/58323238975/oauth/token
+grant_types:
+- authorization_code
+- refresh_token
+- 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+pkce_methods:
+- S256
+scope_count: 4
+scopes:
+- name: openid
+  description: Standard OIDC scope requesting an ID token for the authenticated Maisonette
+    customer.
+- name: email
+  description: Releases the customer's email address and email_verified claim.
+- name: customer-account-api:full
+  description: Full access to the authenticated buyer's Maisonette customer account
+    — profile, addresses, and order history — through Shopify's Customer Account API.
+- name: customer-account-mcp-api:full
+  description: Full access to the customer-account surface through MCP, i.e. lets an
+    agent act on the signed-in buyer's account rather than only on anonymous catalog
+    and cart state.
+claims_supported:
+- iss
+- sub
+- aud
+- exp
+- iat
+- nonce
+- sid
+- email
+- email_verified
+docs: null
+docs_note: Maisonette publishes no scopes/permissions reference page of its own. The
+  scope semantics above are described from Shopify's customer-account model; the scope
+  strings themselves are verbatim from Maisonette's own discovery document.

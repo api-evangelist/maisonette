@@ -1,0 +1,103 @@
+generated: '2026-08-25'
+method: probed
+source: 'Live unauthenticated MCP JSON-RPC probes on 2026-08-25 against https://www.maisonette.com/api/ucp/mcp
+  and https://www.maisonette.com/api/mcp, both announced by the store''s own https://www.maisonette.com/llms.txt
+  and https://www.maisonette.com/.well-known/ucp.'
+ownership_note: 'Both endpoints are served from www.maisonette.com, Maisonette''s own
+  storefront host, and the /.well-known/ucp merchant profile names Maisonette (merchant_name
+  "Maisonette", merchant_origin "www.maisonette.com", Shopify shop id 58323238975).
+  The MCP servers are Shopify platform capabilities exposed on the merchant''s domain
+  — the software is Shopify''s, the merchant surface and catalog reached through it
+  are Maisonette''s.'
+deployment:
+  mode: remote
+  endpoint: https://www.maisonette.com/api/ucp/mcp
+  auth: none
+  verified: probed
+  note: 'tools/list answers 200 with no credentials. Individual tool CALLS require a
+    meta.ucp-agent.profile URI (an agent profile the caller publishes); a call without
+    it returns JSON-RPC error -32001 invalid_profile_url. complete_checkout additionally
+    requires contemporaneous buyer payment approval per the store''s published agent
+    instructions. No install/package fields: there is no stdio distribution.'
+servers:
+- name: Maisonette UCP Commerce MCP
+  endpoint: https://www.maisonette.com/api/ucp/mcp
+  transport: streamable-http
+  protocol_version_advertised: '2026-04-08'
+  mcp_protocol_version_negotiated: '2024-11-05'
+  server_info:
+    name: universal-commerce
+    version: 0.1.0
+  status: live
+  http_status: 200
+  auth: none for discovery; buyer approval required to complete payment
+  tools_file: mcp/maisonette-ucp-mcp-tools.json
+  tool_count: 13
+  tools:
+  - name: search_catalog
+    category: catalog
+  - name: lookup_catalog
+    category: catalog
+  - name: get_product
+    category: catalog
+  - name: create_cart
+    category: cart
+  - name: get_cart
+    category: cart
+  - name: update_cart
+    category: cart
+  - name: cancel_cart
+    category: cart
+  - name: create_checkout
+    category: checkout
+  - name: get_checkout
+    category: checkout
+  - name: update_checkout
+    category: checkout
+  - name: complete_checkout
+    category: checkout
+  - name: cancel_checkout
+    category: checkout
+  - name: get_order
+    category: order
+  capabilities_advertised:
+    tools: true
+    prompts: true
+    resources: true
+    logging: true
+  mirror_endpoint: https://ad4903-c2.myshopify.com/api/ucp/mcp
+  mirror_note: The /.well-known/ucp service entry points at the myshopify.com canonical
+    host; both hosts answer tools/list 200 with the same tool set.
+- name: Maisonette Storefront MCP
+  endpoint: https://www.maisonette.com/api/mcp
+  transport: streamable-http
+  status: live
+  http_status: 200
+  auth: none
+  tools_file: mcp/maisonette-storefront-mcp-tools.json
+  tool_count: 5
+  tools:
+  - name: search_catalog
+    category: catalog
+  - name: get_product_details
+    category: catalog
+  - name: get_cart
+    category: cart
+  - name: update_cart
+    category: cart
+  - name: search_shop_policies_and_faqs
+    category: support
+  note: The lighter read-and-cart Shopify Storefront MCP surface. Not named in llms.txt;
+    found by probing the conventional Shopify path.
+discovery:
+- https://www.maisonette.com/llms.txt
+- https://www.maisonette.com/agents.md
+- https://www.maisonette.com/.well-known/ucp
+- https://www.maisonette.com/sitemap_agentic_discovery.xml
+rate_limiting:
+  documented: The store's llms.txt states the MCP endpoint is rate-limited per IP and
+    instructs agents to back off on 429.
+  observed_headers:
+  - shopify-complexity-score
+  - shopify-complexity-score-v2
+  - x-shopify-ucp-mcp-api-version

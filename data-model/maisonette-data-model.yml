@@ -1,0 +1,179 @@
+generated: '2026-08-25'
+method: derived
+source: Derived from the JSON Schema 2020-12 inputSchemas returned by tools/list on
+  https://www.maisonette.com/api/ucp/mcp (probed 2026-08-25) and saved verbatim at mcp/maisonette-ucp-mcp-tools.json.
+note: 'There is no OpenAPI to derive $ref links from. This graph is read from the request
+  schemas of the 13 live MCP tools, which is the only machine-readable description of
+  Maisonette''s entities that exists. Response shapes are governed by the UCP capability
+  schemas on ucp.dev (dev.ucp.shopping.*) named in /.well-known/ucp; those are the protocol''s
+  schemas, not Maisonette''s, and are referenced rather than copied here.'
+identifier_convention:
+  style: Shopify global ID (GID)
+  pattern: gid://shopify/<Type>/<id>
+  example_documented: gid://shopify/Checkout/abc123
+entities:
+- name: Product
+  operations:
+  - search_catalog
+  - lookup_catalog
+  - get_product
+  fields_referenced:
+  - id
+  - selected
+  - preferences
+  note: Read-only. get_product returns a single product; lookup_catalog resolves multiple
+    products or variants by identifier.
+- name: Variant
+  operations:
+  - lookup_catalog
+  - get_product
+  note: Addressed via the same catalog identifier space as Product; get_product's `selected`
+    parameter chooses a variant.
+- name: Cart
+  operations:
+  - create_cart
+  - get_cart
+  - update_cart
+  - cancel_cart
+  fields:
+  - line_items
+  - buyer
+  - context
+  - attribution
+  - fulfillment
+  - discounts
+- name: Checkout
+  operations:
+  - create_checkout
+  - get_checkout
+  - update_checkout
+  - complete_checkout
+  - cancel_checkout
+  fields:
+  - payment
+  - line_items
+  - buyer
+  - context
+  - attribution
+  - cart_id
+  - fulfillment
+  - discounts
+- name: LineItem
+  fields:
+  - id
+  - quantity
+  - item
+  note: Embedded array on Cart and Checkout. Required when creating either.
+- name: Buyer
+  fields:
+  - email
+  - phone_number
+  note: Embedded on Cart and Checkout. Personally identifying; supplied by the agent
+    on the buyer's behalf.
+- name: Fulfillment
+  fields:
+  - methods
+  note: 'Embedded on Cart and Checkout. /.well-known/ucp constrains it: allows_multi_destination.shipping
+    false, allows_method_combinations [["shipping"]] — one shipping destination per
+    checkout, shipping only.'
+- name: Discount
+  fields:
+  - codes
+  note: Embedded. The tool description instructs agents to prompt for a code only if
+    the customer mentions having one.
+- name: Payment
+  fields:
+  - instruments
+  instrument_fields:
+  - id
+  - handler_id
+  - type
+  - credential
+  - billing_address
+  note: Conditional schema — apple-pay handler_id requires billing_address and a credential
+    of type apple_pay_token; all other handlers require credential.token and credential.type.
+    Handlers are enumerated in /.well-known/ucp (com.google.pay, dev.shopify.card).
+- name: Attribution
+  fields:
+  - referring_domain
+  - click_id_tag
+  - click_id_value
+  - activity_id_tag
+  - activity_id_value
+  - utm_campaign
+  - utm_source
+  - utm_medium
+  - utm_content
+  - utm_term
+  note: Marketing attribution context carried through cart and checkout.
+- name: Order
+  operations:
+  - get_order
+  note: Read-only. No create, update, cancel or refund operation exists — an order is
+    produced as the result of complete_checkout and can only be read afterwards.
+- name: BuyerContext
+  fields:
+  - address_country
+  - address_region
+  - postal_code
+  - language
+  - currency
+  - intent
+  note: Provisional buyer signals for relevance, pricing and localization. Attached to
+    catalog, cart and checkout calls.
+relationships:
+- from: Checkout
+  to: Cart
+  type: belongs_to
+  via: checkout.cart_id
+- from: Cart
+  to: LineItem
+  type: has_many
+  via: cart.line_items[]
+- from: Checkout
+  to: LineItem
+  type: has_many
+  via: checkout.line_items[]
+- from: LineItem
+  to: Product
+  type: belongs_to
+  via: line_items[].item
+- from: Cart
+  to: Buyer
+  type: has_one
+  via: cart.buyer
+- from: Checkout
+  to: Buyer
+  type: has_one
+  via: checkout.buyer
+- from: Checkout
+  to: Payment
+  type: has_one
+  via: checkout.payment
+- from: Payment
+  to: PaymentInstrument
+  type: has_many
+  via: payment.instruments[]
+- from: Cart
+  to: Fulfillment
+  type: has_one
+  via: cart.fulfillment
+- from: Checkout
+  to: Fulfillment
+  type: has_one
+  via: checkout.fulfillment
+- from: Checkout
+  to: Discount
+  type: has_one
+  via: checkout.discounts
+- from: Checkout
+  to: Order
+  type: produces
+  via: complete_checkout
+- from: Product
+  to: Variant
+  type: has_many
+  via: catalog.selected
+money_representation:
+  type: integer minor units + ISO 4217 currency code
+  example: '{"amount": 2500, "currency": "USD"} is $25.00'

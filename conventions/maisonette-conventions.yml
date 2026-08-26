@@ -1,0 +1,130 @@
+generated: '2026-08-25'
+method: probed
+source: 'Read from the live MCP tool schemas at https://www.maisonette.com/api/ucp/mcp
+  (tools/list, 2026-08-25), the store''s /.well-known/ucp merchant profile, /llms.txt,
+  observed HTTP response headers, and the published return policy at https://www.maisonette.com/policies/refund-policy.'
+note: Maisonette has no REST API of its own. The cross-cutting semantics below govern
+  its agent-facing MCP/UCP surface, which is the only programmable surface it publishes.
+interface_style: MCP (JSON-RPC 2.0 over streamable HTTP), implementing the Universal
+  Commerce Protocol shopping service.
+auth_style: Anonymous for discovery, catalog and cart; Shopify-hosted OAuth 2.0/OIDC
+  for buyer-account access; contemporaneous buyer approval for payment. See authentication/maisonette-authentication.yml.
+agent_identity:
+  required: true
+  field: params.meta.ucp-agent.profile
+  description: Every UCP tool marks `meta` required and expects a URI pointing at the
+    calling agent's own published profile. This is the store's caller-identification
+    convention and it is enforced.
+  failure: 'JSON-RPC error -32001, data.code invalid_profile_url, message "Unable to
+    fetch agent profile: Missing profile uri".'
+money:
+  representation: integer minor units paired with an ISO 4217 currency code
+  example: '{"amount": 600, "currency": "USD"} is $6.00'
+  note: Stated verbatim in every checkout, cart and order tool description. Agents must
+    convert to major units before quoting a price to a buyer.
+localization:
+  fields:
+  - context.address_country (ISO 3166-1 alpha-2)
+  - context.address_region
+  - context.postal_code
+  - context.language (BCP 47)
+  - context.currency (ISO 4217)
+  - context.intent
+  note: llms.txt instructs agents to pass context.address_country and context.currency
+    for accurate pricing and availability.
+pagination:
+  style: opaque cursor
+  request_field: pagination.cursor
+  response_field: pagination.cursor
+  note: search_catalog returns a limited first page and documents using the returned
+    cursor to fetch more when the buyer asks for it.
+identifiers:
+  style: Shopify GIDs
+  examples:
+  - gid://shopify/Checkout/abc123
+  note: Checkout, cart, order and product identifiers are Shopify global IDs, documented
+    inline in the tool inputSchemas.
+error_envelope:
+  format: JSON-RPC 2.0 error object
+  shape: '{"jsonrpc":"2.0","id":<id>,"error":{"code":<int>,"message":<string>,"data":{"code":<slug>,"content":<string>,"continue_url":<url>}}}'
+  note: The data.continue_url field hands the agent a human-completable URL to fall
+    back to. See errors/maisonette-problem-types.yml.
+rate_limit_signaling:
+  documented: 'llms.txt: "Respect rate limits. The MCP endpoint is rate-limited per
+    IP. Back off on 429 responses."'
+  headers_observed:
+  - shopify-complexity-score
+  - shopify-complexity-score-v2
+  - x-shopify-ucp-mcp-api-version
+  headers_absent:
+  - X-RateLimit-Limit
+  - X-RateLimit-Remaining
+  - RateLimit-Limit
+  - Retry-After
+  note: No numeric quota or reset header is returned on a successful call; the complexity
+    score is the only runtime cost signal. See rate-limits/maisonette-rate-limits.yml.
+versioning:
+  scheme: date-versioned protocol
+  current: '2026-04-08'
+  also_supported:
+  - '2026-01-23'
+  runtime_signal: 'x-shopify-ucp-mcp-api-version: 2026-04-08 response header'
+  discovery: /.well-known/ucp supported_versions maps each version to its own discovery
+    document.
+idempotency:
+  supported: true
+  scope: complete_checkout only
+  field: params.meta.idempotency-key
+  required: true
+  type: string
+  spec_evidence: 'The complete_checkout inputSchema declares meta.properties["idempotency-key"]
+    {type: string, description: "An idempotency key for completing the checkout."} and
+    lists it in meta.required alongside ucp-agent. It is the only tool of the 13 that
+    carries it.'
+  source: tools/list on https://www.maisonette.com/api/ucp/mcp, probed 2026-08-25
+  retention: not documented
+  note: 'The one operation that moves money is the one that demands an idempotency key,
+    and it demands it rather than merely accepting it — a retried complete_checkout
+    cannot double-charge. The other 12 tools accept no key: an agent that retries create_checkout
+    or create_cart blind will create a second resource. Reversal is available for those
+    (cancel_checkout / cancel_cart) — see reversibility below.'
+dry_run_mode:
+  supported: false
+  note: No simulate/preview/dry-run flag exists. create_cart and create_checkout are
+    the closest thing to a rehearsal — they compute totals, taxes, discounts and shipping
+    without charging — and both are reversible via cancel_cart / cancel_checkout.
+reversibility:
+  grade: verified
+  note: Every write surface Maisonette exposes to an agent has a named reversal operation,
+    and the post-purchase window is stated in the store's own published policy.
+  surfaces:
+  - write_operation: create_cart / update_cart
+    reversal: cancel_cart
+    window: any time before checkout completion
+    window_stated: true
+    source: MCP tool description "Cancels a cart." at https://www.maisonette.com/api/ucp/mcp
+  - write_operation: create_checkout / update_checkout
+    reversal: cancel_checkout
+    window: any time before complete_checkout succeeds; payment is only captured on
+      completion
+    window_stated: true
+    source: MCP tool description "Cancels a checkout." plus the buyer-approval rule in
+      https://www.maisonette.com/llms.txt
+  - write_operation: complete_checkout
+    reversal: return / refund (human process, no API operation)
+    window: 30 days from the date of delivery, per item; a flat $9.95 fee applies per
+      return shipment. Holiday exception - eligible items purchased between November
+      15 and December 15 can be returned through January 15.
+    window_stated: true
+    source: https://www.maisonette.com/policies/refund-policy
+    caveat: 'There is no programmatic refund or order-cancellation tool. get_order is
+      read-only. Non-returnable categories are enumerated in the policy: final sale,
+      gift cards, as-is/open-box, worn or unpackaged items, items without tags, personalized
+      or monogrammed items, worn swimwear, and items from international brands or shipped
+      outside the US.'
+cross_links:
+  errors: errors/maisonette-problem-types.yml
+  lifecycle: lifecycle/maisonette-lifecycle.yml
+  authentication: authentication/maisonette-authentication.yml
+  rate_limits: rate-limits/maisonette-rate-limits.yml
+  data_model: data-model/maisonette-data-model.yml

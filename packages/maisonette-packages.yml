@@ -1,0 +1,56 @@
+generated: '2026-08-25'
+method: searched
+source: 'Searched registry.npmjs.org (text search "maisonette", and the metadata endpoint
+  for @maisonette/ui), the GitHub API for a maisonette organization and for repositories
+  named maisonette, and the store''s own /llms.txt and /agents.md for any SDK reference,
+  all on 2026-08-25.'
+official_package_count: 0
+note: 'Maisonette ships no first-party client library. Its agent surface is MCP over
+  HTTP with no stdio distribution — llms.txt directs agents to POST directly to /api/ucp/mcp
+  or to install Shopify''s shop.app skill, neither of which is a Maisonette package.
+  There is no GitHub organization: github.com/maisonette is an unrelated personal account
+  created in 2015 with zero public repositories. One npm scope exists and is recorded
+  below as unverified, because nothing in it or around it names the company.'
+packages:
+- name: '@maisonette/ui'
+  registry: npm
+  url: https://www.npmjs.com/package/@maisonette/ui
+  official: false
+  version: 1.3.0
+  published: '2023-02-01'
+  first_published: '2023-01-03'
+  version_count: 5
+  language: javascript
+  status: unverified-ownership
+  note: 'Sole result for "maisonette" on npm. Publisher is the npm user maisonette-delster.
+    The package has no README, no description, no homepage and no repository field,
+    so there is nothing in its own metadata that ties it to Maisonette Inc., and the
+    company links to no SDK anywhere on its site. Recorded as a lead with official:
+    false rather than credited as a first-party SDK. Last publish 2023-02-01 — three
+    and a half years stale either way, and it predates the current Shopify storefront
+    entirely.'
+registries_searched:
+- registry: npm
+  result: 1 name-matching package, ownership unverified (above)
+- registry: PyPI
+  result: none
+- registry: RubyGems
+  result: none
+- registry: Maven Central
+  result: none
+- registry: NuGet
+  result: none
+- registry: pkg.go.dev
+  result: none
+- registry: crates.io
+  result: none
+- registry: Packagist
+  result: none
+third_party_agent_distribution:
+- name: Shop skill
+  url: https://shop.app/SKILL.md
+  owner: Shopify
+  official_for_maisonette: false
+  note: Maisonette's llms.txt recommends this skill to personal shopping agents. It is
+    Shopify's cross-store agent skill, not a Maisonette package; it works against every
+    Shopify store. Listed for completeness, not credited to Maisonette.

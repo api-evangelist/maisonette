@@ -1,0 +1,25 @@
+generated: '2026-08-25'
+method: searched
+source: 'Searched https://www.maisonette.com/ for any developer, API or partner pricing
+  surface on 2026-08-25. Probed /pages/partner (200), /pages/faq (200), /pages/press
+  (200); /pages/sell-with-us and /apps both 404.'
+plan_count: 0
+plans: []
+note: 'Maisonette is a direct-to-consumer children''s and baby marketplace, not an API
+  vendor. It sells products, not API access, so there is no developer plan, no API tier,
+  no quota package and nothing to price. Its programmable surface — the UCP/MCP commerce
+  endpoints at /api/ucp/mcp and /api/mcp — is free and unmetered to anonymous agents
+  by design: the store''s business model is the basket, not the call. This is a genuine
+  zero, not an undiscovered pricing page.'
+commercial_context:
+  model: consumer marketplace
+  partner_track:
+    url: https://www.maisonette.com/pages/partner
+    status: 200
+    description: Brand partnership enquiry page for boutiques and children's brands
+      wanting to sell on the marketplace. Contact is by email (buyers@maisonette.com);
+      no self-serve pricing, no rate card, and no API is offered as part of it.
+  buyer_costs_published:
+  - item: return shipping
+    price: USD 9.95 flat per return shipment
+    source: https://www.maisonette.com/policies/refund-policy
