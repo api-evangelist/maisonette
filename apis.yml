@@ -11,6 +11,17 @@ description: 'Maisonette is a New York-based online marketplace for babies and c
   an llms.txt and agents.md with explicit agent instructions, an agent-discovery sitemap,
   and OAuth 2.0/OIDC and RFC 9728 discovery documents served from its own host.'
 url: https://raw.githubusercontent.com/api-evangelist/maisonette/refs/heads/main/apis.yml
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://www.maisonette.com/cdn/shop/files/Favicon_Maisonette_ac4c0de7-1fd8-4114-b034-f15a8d57ac59.png?v=1776358749&width=512
 x-type: company
 x-source: harvest:secondary-market
