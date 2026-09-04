@@ -22,6 +22,21 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  - scopes
+  - rate-limits
+  - security
+  generated: '2026-09-02'
+  method: derived
 image: https://www.maisonette.com/cdn/shop/files/Favicon_Maisonette_ac4c0de7-1fd8-4114-b034-f15a8d57ac59.png?v=1776358749&width=512
 x-type: company
 x-source: harvest:secondary-market
