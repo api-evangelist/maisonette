@@ -99,6 +99,9 @@ apis:
     url: https://www.maisonette.com/agents.md
   - type: LLMsTxt
     url: https://www.maisonette.com/llms.txt
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: ucp
 - name: Maisonette Storefront MCP
   description: The lighter read-and-cart Shopify Storefront MCP surface on Maisonette's
     own host — five anonymous tools covering catalog search, product detail, cart read
@@ -113,6 +116,9 @@ apis:
   properties:
   - type: MCPServer
     url: mcp/maisonette-mcp.yml
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: storefront-mcp
 common:
 - type: Website
   url: https://www.maisonette.com/
