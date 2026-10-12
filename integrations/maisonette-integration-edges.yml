@@ -1,0 +1,16 @@
+generated: '2026-10-12'
+method: none
+source:
+- https://zapier.com/apps/maisonette/integrations
+- https://n8n.io/integrations/maisonette/
+- https://composio.dev/toolkits/maisonette
+- https://monid.ai/tools/maisonette
+checked:
+- https://composio.dev/toolkits/maisonette
+- https://monid.ai/tools/maisonette
+- https://n8n.io/integrations/maisonette/
+- https://zapier.com/apps/maisonette/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []
