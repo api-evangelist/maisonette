@@ -64,19 +64,116 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Maisonette is a New York-based online marketplace for babies and children, founded in 2017 by
-Sylvana Ward Durrett and Luisana Mendoza de Roccia, selling clothing, toys, furniture and decor for
-ages 0-12 from a curated network of independent boutiques and 800+ brands.
+Maisonette is a New York-based online marketplace for babies and children, founded in 2017 by Sylvana Ward Durrett and Luisana Mendoza de Roccia, selling clothing, toys, furniture and decor for ages 0-12 from a curated network of independent boutiques and 800+ brands. It is a marketplace rather than a single seller: each item ships directly from its brand and is returned separately. Maisonette publishes no OpenAPI and runs no developer program, but its Shopify-hosted storefront exposes a real, live, unauthenticated agent surface — a Universal Commerce Protocol MCP endpoint with thirteen catalog, cart, checkout and order tools, a five-tool storefront MCP endpoint, an llms.txt and agents.md with explicit agent instructions, an agent-discovery sitemap, and OAuth 2.0/OIDC and RFC 9728 discovery documents served from its own host.
 
-Maisonette publishes no OpenAPI and runs no developer program. It does publish a real, live,
-unauthenticated agent surface from its own host:
+**Areas:** Company · Retail · E-Commerce · Marketplace · Shopping · Children · Baby · Apparel · Homes · Agentic Commerce · MCP · Universal Commerce Protocol
 
-- **UCP commerce MCP** — `https://www.maisonette.com/api/ucp/mcp`, 13 tools (catalog, cart, checkout,
-  order), Universal Commerce Protocol `2026-04-08`.
-- **Storefront MCP** — `https://www.maisonette.com/api/mcp`, 5 anonymous read-and-cart tools.
-- **Agent instructions** — [`/llms.txt`](https://www.maisonette.com/llms.txt) and
-  [`/agents.md`](https://www.maisonette.com/agents.md), plus a dedicated `/sitemap_agentic_discovery.xml`.
-- **Discovery documents** — `/.well-known/ucp`, `/.well-known/openid-configuration`,
-  `/.well-known/oauth-authorization-server`, `/.well-known/oauth-protected-resource` (RFC 9728).
+## Maisonette on APIs.io
 
-- https://www.maisonette.com/
+Everything profiled for Maisonette is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/maisonette/](https://apis.io/providers/maisonette/)** — or go straight to one of the APIs or properties below.
+
+### APIs (2)
+
+- [Maisonette UCP Commerce MCP](https://apis.io/apis/maisonette/maisonette-ucp-commerce-mcp/) — Maisonette's agent-facing commerce surface: a Universal Commerce Protocol (2026-04-08) MCP server exposing thirteen tools across catalog search and lookup,…
+- [Maisonette Storefront MCP](https://apis.io/apis/maisonette/maisonette-storefront-mcp/) — The lighter read-and-cart Shopify Storefront MCP surface on Maisonette's own host — five anonymous tools covering catalog search, product detail, cart read…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [maisonette-mcp.yml](https://apis.io/servers/maisonette/maisonette-mcp-yml/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Maisonette Authentication](https://apis.io/security/maisonette/maisonette-authentication/)
+- [Maisonette Domain Security](https://apis.io/security/maisonette/maisonette-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Maisonette Scopes](https://apis.io/scopes/maisonette/maisonette-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Maisonette Plans Pricing](https://apis.io/plans/maisonette/maisonette-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Maisonette Rate Limits](https://apis.io/rate-limits/maisonette/maisonette-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.maisonette.com/)
+- [Documentation](https://www.maisonette.com/agents.md)
+- [Sign up](https://www.maisonette.com/account/register)
+- [Support](https://www.maisonette.com/pages/contact)
+- [Terms of service](https://www.maisonette.com/policies/terms-of-service)
+- [Privacy policy](https://www.maisonette.com/policies/privacy-policy)
+
+## API Evangelist rating
+
+**Kin Score 25.0** — emerging · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 75.0 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 28.0 |
+| Access clarity | 34.2 |
+
+**Agent readiness 27.0** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | platform (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | verified |
+| Dynamic Client Registration | — |
+| Agentic Commerce | platform (partial credit) |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 34.3** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/maisonette/](https://apis.io/providers/maisonette/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Maisonette: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/maisonette/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
